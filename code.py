@@ -1,112 +1,146 @@
 # -*- coding: utf-8 -*-
 import web
-import MySQLdb
-import MySQLdb.cursors
-
-# to find a model from templates
-render = web.template.render('templates')
+import json
 
 #design urls ,there are three urls,ip+port+url
-urls = ('/index', 'index', '/find', 'find', '/add', 'add', '/delete', 'delete',
-        '/modify', 'modify')
+urls =(
+    '/addition/data=(.*)', 'addition',
+    '/deletion/USERID=(.*)', 'deletion',
+    '/revise/USERID=(.*)/data={(.*?)}', 'revise',
+    '/users/(.*)', 'users'
+)
 
 
-#define class
-class index:
+#抽象数据库连接
+class DBconn:
+    def conn(self):
+        db = web.database(
+            dbn='mysql',
+            user='root',
+            pw='123456',
+            db='dbname'
+        )
+        return db
 
-    def GET(self):
-        return render.index()
+    def close(self):
+        db = DBconn.conn(self)
+        #没有 直接关闭数据库的方法
+        db.query('exit')
 
 
-class add:
+#实现数据的添加
+class addition:
+    def POST(self, info):
+        """
+        开始的时候想使用'ip+端口+/+信息的形式'------》》
+        然后想传入一个json对象 -------》》
+        再后来想传一个 user对象 -----》》
+        使用json中嵌入列表，------》》
+        还没有更好的想法
+        """
 
-    def GET(self):
-
-        return render.add()
-
-    def POST(self):
-        i = web.input()
-        db = web.database(dbn='mysql', user='root', pw='123456', db='dbname')
-
+        #list = url.split('/')
+        db = DBconn.conn(self)
         if db.insert(
                 'todo',
-                USERNAME=i.USERNAME,
-                IDCARD=i.IDCARD,
-                TEL=i.TELNUM,
-                APPLICANT=i.APPLICANT,
-                DEPARTMENT=i.DEPARTMENT,
-                VPNACCOUT=i.VPNACCOUT,
-                PASSWORD=i.PASSWORD,
-                STARTIME=i.STARTIME,
-                ENDTIME=i.ENDTIME,
-                ACCTYPE=i.ACCTYPE,
-                SERVERIP=i.SERVERIP,
-                SERVERPORT=i.SERVERPORT):
-            return render.true()
+                USERNAME=info['USERNAME'],
+                IDCARD=info['IDCARD'],
+                TEL=info['TEL'],
+                APPLICANT=info['APPLICANT'],
+                DEPARTMENT=info['DEPARTMENT'],
+                VPNACCOUT=info['VPNACCOUT'],
+                PASSWORD=info['PASSWORD'],
+                STARTIME=info['STARTIME'],
+                ENDTIME=info['ENDTIME'],
+                ACCTYPE=info['ACCTYPE'],
+                SERVERIP=info['SERVERIP'],
+                SERVERPORT=info['SERVERPORT']):
+            return 'OK'
         else:
-            return render.false()
-        #raise web.seeother('/')
+            return 'false'
+    def GET(self,info):
+        self.POST(info)
 
 
-class delete:
+#实现数据的删除
+class deletion:
+    """根据USERID信息删除"""
 
-    def GET(self):
-        return render.delete()
-
-    def POST(self):
-
-        i = web.input()
-        db = web.database(dbn='mysql', user='root', pw='123456', db='dbname')
-
-        #if db.delete('todo', where='USERNAME=$USERNAME', vars={'USERNAME':i.USERNAME}):
+    def POST(self, USERID):
+        db = DBconn.conn(self)
         if db.delete(
                 'todo',
-                where='USERNAME=$USERNAME' and 'SERVERIP=$SERVERIP',
+                where='USERID=$USERID',
                 vars={
-                    'USERNAME': i.USERNAME,
-                    'SERVERIP': i.SERVERIP
+                    'USERID': USERID
                 }):
-            return render.true()
+
+            print('ok')
+            return 'ok'
         else:
-            return render.false()
+
+            print('error')
+            return 'error'
+
+    def GET(self,USERID):
+        self.POST(USERID)
 
 
-class modify:
+#实现数据的修改
+class revise:
+    """根据USERID 选中用户，在使用info内的信息修改用户信息"""
 
-    def GET(self):
-        return render.modify()
+    def POST(self, USERID, info):
+        db = DBconn.conn(self)
 
-    def POST(self):
-        i = web.input()
-        db = web.database(dbn='mysql', user='root', pw='123456', db='dbname')
         if db.update(
                 'todo',
-                where='USERNAME=$USERNAME' and 'SERVERIP=$SERVERIP',
-                vars={'USERNAME': i.USERNAME,
-                      'SERVERIP': i.SERVERIP},
-                IDCARD=i.IDCARD,
-                TEL=i.TELNUM,
-                APPLICANT=i.APPLICANT,
-                DEPARTMENT=i.DEPARTMENT,
-                VPNACCOUT=i.VPNACCOUT,
-                PASSWORD=i.PASSWORD,
-                STARTIME=i.STARTIME,
-                ENDTIME=i.ENDTIME,
-                ACCTYPE=i.ACCTYPE,
-                SERVERIP=i.SERVERIP,
-                SERVERPORT=i.SERVERPORT):
-            return render.true()
+                where='USERID=$USERID',
+                vars={
+                    'USERID': USERID
+                },
+                USERNAME=info['USERNAME'],
+                IDCARD=info['IDCARD'],
+                TEL=info['TEL'],
+                APPLICANT=info['APPLICANT'],
+                DEPARTMENT=info['DEPARTMENT'],
+                VPNACCOUT=info['VPNACCOUT'],
+                PASSWORD=info['PASSWORD'],
+                STARTIME=info['STARTIME'],
+                ENDTIME=info['ENDTIME'],
+                ACCTYPE=info['ACCTYPE'],
+                SERVERIP=info['SERVERIP'],
+                SERVERPORT=info['SERVERPORT']):
+            return 'ok'
         else:
-            return render.false()
+            return 'error'
+    def GET(self,USERID, info):
+        self.POST(USERID,info)
 
+#实现数据的查找
+class users:
+    """根据USERID 进行查找"""
 
-class find:
+    def GET(self, USERID):
+        datas = [
 
-    def GET(self):
-        db = web.database(dbn='mysql', user='root', pw='123456', db='dbname')
-        #users = db.query('select * from todo where id>$id', vars={'id':100})
-        r = db.query('select *from todo')
-        return render.find(r)
+        ]
+        db = DBconn.conn(self)
+        if db:
+            str = "select *from todo where USERID='%s'" %(USERID)
+            result = db.query(str)
+            for i ,j in enumerate(result):
+                #print("i=%s" %(i)) i是索引
+                #print("j=%s" %(j)) j是内容
+                print("=============!")
+                outj = dict(j)
+                #datas[i] = outj
+                datas.append(outj)
+            return datas
+        else:
+            print('error')
+            #return 'error'
+
 
 
 if __name__ == '__main__':
