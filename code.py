@@ -41,23 +41,24 @@ class addition:
 
         #list = url.split('/')
         db = DBconn.conn(self)
-        if db.insert(
-                'todo',
-                USERNAME=info['USERNAME'],
-                IDCARD=info['IDCARD'],
-                TEL=info['TEL'],
-                APPLICANT=info['APPLICANT'],
-                DEPARTMENT=info['DEPARTMENT'],
-                VPNACCOUT=info['VPNACCOUT'],
-                PASSWORD=info['PASSWORD'],
-                STARTIME=info['STARTIME'],
-                ENDTIME=info['ENDTIME'],
-                ACCTYPE=info['ACCTYPE'],
-                SERVERIP=info['SERVERIP'],
-                SERVERPORT=info['SERVERPORT']):
-            return 'OK'
-        else:
-            return 'false'
+        while type(info) == dict:
+            if db.insert(
+                    'todo',
+                    USERNAME=info['USERNAME'],
+                    IDCARD=info['IDCARD'],
+                    TEL=info['TEL'],
+                    APPLICANT=info['APPLICANT'],
+                    DEPARTMENT=info['DEPARTMENT'],
+                    VPNACCOUT=info['VPNACCOUT'],
+                    PASSWORD=info['PASSWORD'],
+                    STARTIME=info['STARTIME'],
+                    ENDTIME=info['ENDTIME'],
+                    ACCTYPE=info['ACCTYPE'],
+                    SERVERIP=info['SERVERIP'],
+                    SERVERPORT=info['SERVERPORT']):
+                return 'ok'
+            else:
+                return 'error'
     def GET(self,info):
         self.POST(info)
 
@@ -75,11 +76,8 @@ class deletion:
                     'USERID': USERID
                 }):
 
-            print('ok')
             return 'ok'
         else:
-
-            print('error')
             return 'error'
 
     def GET(self,USERID):
@@ -92,28 +90,28 @@ class revise:
 
     def POST(self, USERID, info):
         db = DBconn.conn(self)
-
-        if db.update(
-                'todo',
-                where='USERID=$USERID',
-                vars={
-                    'USERID': USERID
-                },
-                USERNAME=info['USERNAME'],
-                IDCARD=info['IDCARD'],
-                TEL=info['TEL'],
-                APPLICANT=info['APPLICANT'],
-                DEPARTMENT=info['DEPARTMENT'],
-                VPNACCOUT=info['VPNACCOUT'],
-                PASSWORD=info['PASSWORD'],
-                STARTIME=info['STARTIME'],
-                ENDTIME=info['ENDTIME'],
-                ACCTYPE=info['ACCTYPE'],
-                SERVERIP=info['SERVERIP'],
-                SERVERPORT=info['SERVERPORT']):
-            return 'ok'
-        else:
-            return 'error'
+        while type(info)==dict:
+            if db.update(
+                    'todo',
+                    where='USERID=$USERID',
+                    vars={
+                        'USERID': USERID
+                    },
+                    USERNAME=info['USERNAME'],
+                    IDCARD=info['IDCARD'],
+                    TEL=info['TEL'],
+                    APPLICANT=info['APPLICANT'],
+                    DEPARTMENT=info['DEPARTMENT'],
+                    VPNACCOUT=info['VPNACCOUT'],
+                    PASSWORD=info['PASSWORD'],
+                    STARTIME=info['STARTIME'],
+                    ENDTIME=info['ENDTIME'],
+                    ACCTYPE=info['ACCTYPE'],
+                    SERVERIP=info['SERVERIP'],
+                    SERVERPORT=info['SERVERPORT']):
+                return 'ok'
+            else:
+                return 'error'
     def GET(self,USERID, info):
         self.POST(USERID,info)
 
@@ -127,7 +125,7 @@ class users:
         ]
         db = DBconn.conn(self)
         if db:
-            str = "select *from todo where USERID='%s'" %(USERID)
+            str = "select *from todo where USERID=%s" %(USERID)
             result = db.query(str)
             for i ,j in enumerate(result):
                 #print("i=%s" %(i)) i是索引
@@ -138,8 +136,8 @@ class users:
                 datas.append(outj)
             return datas
         else:
-            print('error')
-            #return 'error'
+            #print('error')
+            return 'error'
 
 
 
