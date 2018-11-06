@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://127.0.0.1:8080/NewWSDLFile/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NewWSDLFile" targetNamespace="http://127.0.0.1:8080/NewWSDLFile/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://127.0.0.1:8080/NewWSDLFile/">
+      <xsd:element name="addition">
+        <xsd:complexType>
+          <xsd:sequence>
+          	<xsd:element name="UAERID" type="xsd:string" />
+          	<xsd:element name="IDCARD" type="xsd:string"></xsd:element>
+          	<xsd:element name="TEL" type="xsd:string"></xsd:element>
+          	<xsd:element name="APPLICANT" type="xsd:string"></xsd:element>
+          	<xsd:element name="DEPARTMENT" type="xsd:string"></xsd:element>
+          	<xsd:element name="VPNACCOUT" type="xsd:string"></xsd:element>
+          	<xsd:element name="PASSWORD" type="xsd:string"></xsd:element>
+          	<xsd:element name="STARTIME" type="xsd:string"></xsd:element>
+          	<xsd:element name="ENDTIME" type="xsd:string"></xsd:element>
+          	<xsd:element name="ACCTYPE" type="xsd:string"></xsd:element>
+          	<xsd:element name="SERVERIP" type="xsd:string"></xsd:element>
+          	<xsd:element name="SERVERPORT" type="xsd:string"></xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="additionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="deletionl">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="USERID" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="deletionlResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="revise">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="USERID" type="xsd:int"></xsd:element>
+      			<xsd:element name="USERNAME" type="xsd:string"></xsd:element>
+      			<xsd:element name="IDCARD" type="xsd:string"></xsd:element>
+      			<xsd:element name="TEL" type="xsd:string"></xsd:element>
+      			<xsd:element name="APPLICANT" type="xsd:string"></xsd:element>
+      			<xsd:element name="DEPARTMENT" type="xsd:string"></xsd:element>
+      			<xsd:element name="VPNACCOUT" type="xsd:string"></xsd:element>
+      			<xsd:element name="PASSWORD" type="xsd:string"></xsd:element>
+      			<xsd:element name="STARTIME" type="xsd:string"></xsd:element>
+      			<xsd:element name="ENDTIME" type="xsd:string"></xsd:element>
+      			<xsd:element name="ACCTYPE" type="xsd:string"></xsd:element>
+      			<xsd:element name="SERVERIP" type="xsd:string"></xsd:element>
+      			<xsd:element name="SERVERPORT" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="reviseResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="users">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="USERID" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+      <xsd:element name="usersResponse">
+      	<xsd:complexType>
+      		<xsd:sequence>
+
+      			<xsd:element name="out" type="xsd:string"></xsd:element>
+      		</xsd:sequence>
+      	</xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="additionRequest">
+    <wsdl:part element="tns:addition" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="additionResponse">
+    <wsdl:part element="tns:additionResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="deletionlRequest">
+  	<wsdl:part name="parameters" element="tns:deletionl"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="deletionlResponse">
+  	<wsdl:part name="parameters" element="tns:deletionlResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reviseRequest">
+  	<wsdl:part name="parameters" element="tns:revise"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="reviseResponse">
+  	<wsdl:part name="parameters" element="tns:reviseResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="usersRequest">
+  	<wsdl:part name="parameters" element="tns:users"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="usersResponse">
+  	<wsdl:part name="parameters" element="tns:usersResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="NewWSDLFile">
+    <wsdl:operation name="addition">
+      <wsdl:input message="tns:additionRequest"/>
+      <wsdl:output message="tns:additionResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="deletionl">
+    	<wsdl:input message="tns:deletionlRequest"></wsdl:input>
+    	<wsdl:output message="tns:deletionlResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="revise">
+    	<wsdl:input message="tns:reviseRequest"></wsdl:input>
+    	<wsdl:output message="tns:reviseResponse"></wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="users">
+    	<wsdl:input message="tns:usersRequest"></wsdl:input>
+    	<wsdl:output message="tns:usersResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NewWSDLFileSOAP" type="tns:NewWSDLFile">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="addition">
+      <soap:operation soapAction="http://127.0.0.1:8080/NewWSDLFile/addition"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NewWSDLFile">
+    <wsdl:port binding="tns:NewWSDLFileSOAP" name="NewWSDLFileSOAP">
+      <soap:address location="127.0.0.1:8080"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
