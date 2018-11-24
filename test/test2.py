@@ -14,3 +14,5 @@ result=client.service.getCountryCityByIp(ip)
 #client这个对象 ，调用service这个方法，然后再调用userRegister这个接口函数，函数里面传递刚刚我们准备
 #好的得参数字典 t
 print(result)#打印返回结果
+
+print('thsi is a digit %s' %('zifu'))

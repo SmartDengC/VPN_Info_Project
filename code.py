@@ -1,101 +1,89 @@
 # -*- coding: utf-8 -*-
 import web
-import json
+from db import db
 
-#design urls ,there are three urls,ip+port+url
-urls =(
-    '/addition/data=(.*)', 'addition',
-    '/deletion/USERID=(.*)', 'deletion',
-    '/revise/USERID=(.*)/data={(.*?)}', 'revise',
-    '/users/(.*)', 'users'
+urls = (
+    '/user/(\d+)', 'user',
+    '/users', 'users'
 )
 
 
-#抽象数据库连接
-class DBconn:
-    def conn(self):
-        db = web.database(
-            dbn='mysql',
-            user='root',
-            pw='123456',
-            db='dbname'
-        )
-        return db
+class user:
+    # 获取某个用户的信息
 
-    def close(self):
-        db = DBconn.conn(self)
-        #没有 直接关闭数据库的方法
-        db.query('exit')
-
-
-#实现数据的添加
-class addition:
-    def POST(self, info):
-        """
-        开始的时候想使用'ip+端口+/+信息的形式'------》》
-        然后想传入一个json对象 -------》》
-        再后来想传一个 user对象 -----》》
-        使用json中嵌入列表，------》》
-        还没有更好的想法
-        """
-
-        #list = url.split('/')
-        db = DBconn.conn(self)
-        while type(info) == dict:
-            if db.insert(
-                    'todo',
-                    USERNAME=info['USERNAME'],
-                    IDCARD=info['IDCARD'],
-                    TEL=info['TEL'],
-                    APPLICANT=info['APPLICANT'],
-                    DEPARTMENT=info['DEPARTMENT'],
-                    VPNACCOUT=info['VPNACCOUT'],
-                    PASSWORD=info['PASSWORD'],
-                    STARTIME=info['STARTIME'],
-                    ENDTIME=info['ENDTIME'],
-                    ACCTYPE=info['ACCTYPE'],
-                    SERVERIP=info['SERVERIP'],
-                    SERVERPORT=info['SERVERPORT']):
-                return 'ok'
-            else:
-                return 'error'
-    def GET(self,info):
-        self.POST(info)
-
-
-#实现数据的删除
-class deletion:
-    """根据USERID信息删除"""
-
-    def POST(self, USERID):
-        db = DBconn.conn(self)
-        if db.delete(
+    def GET(self, USERID):
+        USERID = int(USERID)
+        datas = []
+        if db:
+            result = db.select(
                 'todo',
                 where='USERID=$USERID',
-                vars={
-                    'USERID': USERID
-                }):
-
-            return 'ok'
+                vars={'USERID': USERID}
+            )
+            for i, j in enumerate(result):
+                out_j = dict(j)
+                datas.append(out_j)
+            return datas
         else:
             return 'error'
 
-    def GET(self,USERID):
-        self.POST(USERID)
+class users:
+    # 获取所有的人员信息
+    def GET(self):
+        result = db.select('todo')
+        list_from_db = []
+        for menber in result:
+            temp = dict()
+            for key in menber:
+                temp[key] = menber[key]
+            list_from_db.append(temp)
+        return list_from_db
+    # 对用户进行操作 增改删
+    def POST(self):
+        '''
+        1:使用web.data()从请求体中获取参数，实现用户添加
 
+        2:主要思路：首先只有一个POST方法（可以有多个）,根据 USERID 这个特殊的字段
 
-#实现数据的修改
-class revise:
-    """根据USERID 选中用户，在使用info内的信息修改用户信息"""
+        如果 只有USERID 则根据USERID 删除
+        如果有USERID 也有 USERNAME 则修改
+        如果有没有USERID 则增加
+        '''
 
-    def POST(self, USERID, info):
-        db = DBconn.conn(self)
-        while type(info)==dict:
-            if db.update(
+        info = web.data()
+        info = str(info, encoding='utf-8')
+        info = eval(info)
+        if ('USERID' not in info.keys()):
+            db.insert(
+                'todo',
+                USERNAME=info['USERNAME'],
+                IDCARD=info['IDCARD'],
+                TEL=info['TEL'],
+                APPLICANT=info['APPLICANT'],
+                DEPARTMENT=info['DEPARTMENT'],
+                VPNACCOUT=info['VPNACCOUT'],
+                PASSWORD=info['PASSWORD'],
+                STARTIME=info['STARTIME'],
+                ENDTIME=info['ENDTIME'],
+                ACCTYPE=info['ACCTYPE'],
+                SERVERIP=info['SERVERIP'],
+                SERVERPORT=info['SERVERPORT'])
+            return 'addition is ok!'
+        else:
+            if ('USERNAME' not in info.keys()):
+                db.delete(
                     'todo',
                     where='USERID=$USERID',
                     vars={
-                        'USERID': USERID
+                        'USERID': info['USERID']
+                    })
+                return 'deletion is ok'
+            else:
+                db.update(
+                    'todo',
+                    where='USERID=$USERID',
+                    vars={
+                        'USERID': info['USERID']
                     },
                     USERNAME=info['USERNAME'],
                     IDCARD=info['IDCARD'],
@@ -108,40 +96,16 @@ class revise:
                     ENDTIME=info['ENDTIME'],
                     ACCTYPE=info['ACCTYPE'],
                     SERVERIP=info['SERVERIP'],
-                    SERVERPORT=info['SERVERPORT']):
-                return 'ok'
-            else:
-                return 'error'
-    def GET(self,USERID, info):
-        self.POST(USERID,info)
-
-#实现数据的查找
-class users:
-    """根据USERID 进行查找"""
-
-    def GET(self, USERID):
-        datas = [
-
-        ]
-        db = DBconn.conn(self)
-        if db:
-            str = "select *from todo where USERID=%s" %(USERID)
-            result = db.query(str)
-            for i ,j in enumerate(result):
-                #print("i=%s" %(i)) i是索引
-                #print("j=%s" %(j)) j是内容
-                print("=============!")
-                outj = dict(j)
-                #datas[i] = outj
-                datas.append(outj)
-            return datas
-        else:
-            #print('error')
-            return 'error'
-
+                    SERVERPORT=info['SERVERPORT'])
+                return 'updating is ok!'
 
 
 if __name__ == '__main__':
-    # to get a object called app to web.application
     app = web.application(urls, globals())
     app.run()
+    # close cursor
+    db._db_cursor().close()
+    # close connection
+    # db._db_cursor().connection.close()
+
+
