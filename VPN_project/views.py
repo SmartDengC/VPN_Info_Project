@@ -1,58 +1,49 @@
 import web
-import sys
-sys.path.append(r"E:\Data_Git\repository_for_github\VPN_info\VPN_Info_Project")
+from VPN_Info_Project.VPN_project import models, urls
 
 
-from models import model
-
-
-urls = (
-    '/user/(\d+)', 'user',
-    '/users', 'users',
-    '/search', 'search'  # 我觉得没有必要，查询所有的用户即可查询所有用户id
-)
-
-
-class user:
-    # 获取某个用户的信息
-    def __init__(self):
-        pass
+class User:
     # 获取单个用户信息
-    def GET(self, USERID):
+    @staticmethod
+    def GET(USERID):
         USERID = int(USERID)
-        datas = []
-        result = model.select(USERID)
+        data = []
+        result = models.select(USERID)
         for i, j in enumerate(result):
             out_j = dict(j)
-            datas.append(out_j)
-        return datas
+            data.append(out_j)
+        return data
 
-        # 增加
-    def POST(self):
+    # 增加
+    @staticmethod
+    def POST():
         info = web.data()
         info = str(info, encoding='utf-8')
         info = eval(info)
-        model.add(info)
+        models.add(info)
         return 'addition is ok!'
 
     # 修改
-    def PUT(self):
+    @staticmethod
+    def PUT():
         info = web.data()
         info = str(info, encoding='utf-8')
         info = eval(info)
-        model.update('USERID', info)
+        models.update('USERID', info)
         return 'updating is ok!'
 
     # 删除
-    def DELETE(self):
-        model.delete('USERID')
+    @staticmethod
+    def DELETE():
+        models.delete('USERID')
         return 'deletion is ok'
 
 
-class users():
+class Users:
     # 获取所有的人员信息
-    def GET(self):
-        result = model.select()
+    @staticmethod
+    def GET():
+        result = models.select_all()
         # result = db.select('todo')
         list_from_db = []
         for menber in result:
@@ -63,29 +54,33 @@ class users():
         return list_from_db
 
     # 增加
-    def POST(self):
+    @staticmethod
+    def POST():
         info = web.data()
         info = str(info, encoding='utf-8')
         info = eval(info)
-        model.add(info)
+        models.add(info)
         return 'addition is ok!'
 
     # 修改
-    def PUT(self):
+    @staticmethod
+    def PUT():
         info = web.data()
         info = str(info, encoding='utf-8')
         info = eval(info)
-        model.update('USERID', info)
+        models.update('USERID', info)
         return 'updating is ok!'
 
     # 删除
-    def DELETE(self):
-        model.delete('USERID')
+    @staticmethod
+    def DELETE():
+        models.delete('USERID')
         return 'deletion is ok'
 
 
-class search:
+class Search:
     pass
+
 
 if __name__ == '__main__':
     app = web.application(urls, globals())

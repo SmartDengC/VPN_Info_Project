@@ -1,6 +1,6 @@
 import web
-import MySQLdb
-import pymysql
+# import MySQLdb
+# import pymysql
 
 
 __db = web.database(
@@ -9,11 +9,6 @@ __db = web.database(
             pw='123456',
             db='dbname'
         )
-
-
-class User:
-    def af(self):
-        pass
 
 
 def add(kwargs):
@@ -35,6 +30,7 @@ def add(kwargs):
     )
 
 
+# 控制层传以userid
 def delete(USERID):
     __db.delete('todo', where={'USERID=$USERID'}, vars={'USERID': USERID})
 
@@ -42,6 +38,8 @@ def delete(USERID):
 def update(USERID, kwargs):
     __db.update(
         'todo',
+        where={'USERID=$USERID'},
+        vars={'USERID': USERID},
         USERNAME=kwargs['USERNAME'],
         IDCARD=kwargs['IDCARD'],
         TEL=kwargs['TEL'],
@@ -53,9 +51,7 @@ def update(USERID, kwargs):
         ENDTIME=kwargs['ENDTIME'],
         ACCTYPE=kwargs['ACCTYPE'],
         SERVERIP=kwargs['SERVERIP'],
-        SERVERPORT=kwargs['SERVERPORT'],
-        where={'USERID=$USERID'},
-        vars={'USERID': USERID}
+        SERVERPORT=kwargs['SERVERPORT']
     )
 
 
@@ -68,8 +64,13 @@ def select(USERID):
     return result
 
 
+def select_all():
+    result = __db.select('todo')
+    return result
+
+
 if __name__ == '__main__':
-    dict = {
+    length = {
         'USERNAME': 'jet',
         'IDCARD': '',
         'TEL': '18328377763',

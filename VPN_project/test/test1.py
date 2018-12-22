@@ -1,5 +1,5 @@
 import unittest
-from code import *
+
 
 class MyTest1(unittest.TestCase):
     def test_users_1(self):
