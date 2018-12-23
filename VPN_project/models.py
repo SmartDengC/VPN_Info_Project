@@ -1,4 +1,5 @@
 import web
+import json
 # import MySQLdb
 # import pymysql
 
@@ -12,7 +13,6 @@ __db = web.database(
 
 
 def add(kwargs):
-    # args = pymysql.escape_dict(args, charset='utf-8', mapping=None)
     __db.insert(
         'todo',
         USERNAME=kwargs['USERNAME'],
@@ -32,10 +32,10 @@ def add(kwargs):
 
 # 控制层传以userid
 def delete(USERID):
-    __db.delete('todo', where={'USERID=$USERID'}, vars={'USERID': USERID})
+    __db.query('DELETE FROM todo WHERE USERID=%s' % USERID)
 
 
-def update(USERID, kwargs):
+def modify(USERID, kwargs):
     __db.update(
         'todo',
         where={'USERID=$USERID'},
@@ -84,5 +84,11 @@ if __name__ == '__main__':
         'SERVERIP': 'jet',
         'SERVERPORT': 'jet'
     }
-
-
+    print(type(length))
+    # update(1, length)
+    user = "{'name' : 'jim', 'sex' : 'male', 'age': 18}"
+    print(user, 'type', type(user))
+    b = eval(user)
+    print(b, 'type', type(b))
+    c = exec(user)
+    print(c, 'type', type(c))
